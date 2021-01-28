@@ -4,7 +4,7 @@ Library to get three different colors from an image and detect if one is light o
 ## How to use
 
 ### Installation:
-Download this repository, put the .dylib into your theos/lib folder and the Kitten folder into your theos/include folder
+Download this repository and navigate into either iOS or tvOS depending on your target system, then put the .dylib into your theos/lib folder and the Kitten folder into your theos/include folder
 
 ### Importing:
 Import the library in your header or main file `#import <Kitten/libKitten.h>`<br>
@@ -25,7 +25,6 @@ You don't have to create variables of course, `[label setTextColor:[libKitten pr
 
 ```objc
 #import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
 #import <Kitten/libKitten.h>
 
 %group ExampleTweak
