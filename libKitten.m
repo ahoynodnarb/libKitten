@@ -2,6 +2,7 @@
 
 @implementation libKitten
 
+// https://stackoverflow.com/a/13695592
 + (UIColor *)backgroundColor:(UIImage *)image {
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -20,15 +21,13 @@
 
 }
 
+// https://stackoverflow.com/a/29266983
 + (UIColor *)primaryColor:(UIImage *)image {
 
-    // 1. determine detail vars (0==low,1==default,2==high)
-    // default detail
     float dimension = 4;
     float flexibility = 1;
     float range = 100;
 
-    // 2. determine the colors in the image
     NSMutableArray* colors = [NSMutableArray new];
     CGImageRef imageRef = [image CGImage];
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -60,12 +59,11 @@
     }
     free(rawData);
 
-    // 3. add some color flexibility (adds more colors either side of the colors in the image)
     NSArray* copycolors = [NSArray arrayWithArray:colors];
     NSMutableArray* flexiblecolors = [NSMutableArray new];
 
     float flexFactor = flexibility * 2 + 1;
-    float factor = flexFactor * flexFactor * 3; // (r,g,b) == *3
+    float factor = flexFactor * flexFactor * 3;
 
     for (int n = 0; n < (dimension * dimension); n++){
         NSArray* pixelcolors = copycolors[n];
@@ -113,24 +111,18 @@
         }
     }
 
-    // 4. distinguish the colors
-    //orders the flexible colors by their occurrence
-    //then keeps them if they are sufficiently disimilar
     NSMutableDictionary* colorCounter = [NSMutableDictionary new];
 
-    // count the occurences in the array
     NSCountedSet* countedSet = [[NSCountedSet alloc] initWithArray:flexiblecolors];
     for (NSString* item in countedSet) {
         NSUInteger count = [countedSet countForObject:item];
         [colorCounter setValue:[NSNumber numberWithInteger:count] forKey:item];
     }
 
-    // sort keys highest occurrence to lowest
     NSArray* orderedKeys = [colorCounter keysSortedByValueUsingComparator:^NSComparisonResult(id obj1, id obj2){
         return [obj2 compare:obj1];
     }];
 
-    // checks if the color is similar to another one already included
     NSMutableArray* ranges = [NSMutableArray new];
     for (NSString* key in orderedKeys){
         NSArray* rgb = [key componentsSeparatedByString:@","];
@@ -153,7 +145,6 @@
         if (!exclude) [ranges addObject:key];
     }
 
-    // return ranges array here if you just want the ordered colors high to low
     NSMutableArray* colorArray = [NSMutableArray new];
     UIColor* color;
     for (NSString* key in ranges){
@@ -169,25 +160,13 @@
     
 }
 
+// https://stackoverflow.com/a/29266983
 + (UIColor *)secondaryColor:(UIImage *)image {
 
-    // 1. determine detail vars (0==low,1==default,2==high)
-    // default detail
     float dimension = 9;
     float flexibility = 3;
     float range = 90;
 
-    // if (detail == 0) { // low detail
-    //     dimension = 4;
-    //     flexibility = 1;
-    //     range = 100;
-    // } else if ( detail == 2 ) { // high detail (patience!)
-    //     dimension = 15;
-    //     flexibility = 3;
-    //     range = 20;
-    // }
-
-    // 2. determine the colors in the image
     NSMutableArray* colors = [NSMutableArray new];
     CGImageRef imageRef = [image CGImage];
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -219,12 +198,11 @@
     }
     free(rawData);
 
-    // 3. add some color flexibility (adds more colors either side of the colors in the image)
     NSArray* copycolors = [NSArray arrayWithArray:colors];
     NSMutableArray* flexiblecolors = [NSMutableArray new];
 
     float flexFactor = flexibility * 2 + 1;
-    float factor = flexFactor * flexFactor * 3; // (r,g,b) == *3
+    float factor = flexFactor * flexFactor * 3;
 
     for (int n = 0; n < (dimension * dimension); n++){
         NSArray* pixelcolors = copycolors[n];
@@ -272,24 +250,18 @@
         }
     }
 
-    // 4. distinguish the colors
-    //orders the flexible colors by their occurrence
-    //then keeps them if they are sufficiently disimilar
     NSMutableDictionary* colorCounter = [NSMutableDictionary new];
 
-    // count the occurences in the array
     NSCountedSet* countedSet = [[NSCountedSet alloc] initWithArray:flexiblecolors];
     for (NSString* item in countedSet) {
         NSUInteger count = [countedSet countForObject:item];
         [colorCounter setValue:[NSNumber numberWithInteger:count] forKey:item];
     }
 
-    // sort keys highest occurrence to lowest
     NSArray* orderedKeys = [colorCounter keysSortedByValueUsingComparator:^NSComparisonResult(id obj1, id obj2){
         return [obj2 compare:obj1];
     }];
 
-    // checks if the color is similar to another one already included
     NSMutableArray* ranges = [NSMutableArray new];
     for (NSString* key in orderedKeys){
         NSArray* rgb = [key componentsSeparatedByString:@","];
@@ -312,7 +284,6 @@
         if (!exclude) [ranges addObject:key];
     }
 
-    // return ranges array here if you just want the ordered colors high to low
     NSMutableArray* colorArray = [NSMutableArray new];
     UIColor* color;
     for (NSString* key in ranges){
@@ -328,6 +299,7 @@
     
 }
 
+// https://gist.github.com/justinHowlett/4611988
 + (BOOL)isDarkImage:(UIImage *)image {
 
     BOOL isDark = FALSE;
@@ -342,7 +314,6 @@
         int r = pixels[i];
         int g = pixels[i + 1];
         int b = pixels[i + 2];
-        //luminance calculation gives more weight to r and b for human eyes
         float luminance = (0.299 * r + 0.587 * g + 0.114 * b);
         if (luminance < 150) darkPixels++;
     }
