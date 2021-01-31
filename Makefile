@@ -1,13 +1,15 @@
-ARCHS = arm64 arm64e
-TARGET = iphone:clang::13.5
-
-include $(THEOS)/makefiles/common.mk
+export ARCHS = arm64 arm64e
+export TARGET = iphone:clang:13.5:13.0
+export SYSROOT = $(THEOS)/sdks/iPhoneOS13.5.sdk/
+export PREFIX = $(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/
 
 LIBRARY_NAME = libKitten
 $(LIBRARY_NAME)_FILES = libKitten.m
 $(LIBRARY_NAME)_CFLAGS = -fobjc-arc
-$(LIBRARY_NAME)_FRAMEWORKS = UIKit Foundation
+$(LIBRARY_NAME)_FRAMEWORKS = UIKit
+ADDITIONAL_CFLAGS += -DTHEOS_LEAN_AND_MEAN
 
+include $(THEOS)/makefiles/common.mk
 include $(THEOS_MAKE_PATH)/library.mk
 
 stage::
